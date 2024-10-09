@@ -1,28 +1,33 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db, auth } from '@/lib/firebase';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
+import { useState, useEffect } from "react";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db, auth } from "@/lib/firebase";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 export default function WidgetConfig() {
   const [config, setConfig] = useState({
-    title: '',
-    primaryColor: '#000000',
-    secondaryColor: '#ffffff',
+    title: "",
+    primaryColor: "#000000",
+    secondaryColor: "#ffffff",
   });
   const { toast } = useToast();
 
   useEffect(() => {
     const fetchConfig = async () => {
       if (auth.currentUser) {
-        const docRef = doc(db, 'widget_configs', auth.currentUser.uid);
+        const docRef = doc(db, "widget_configs", auth.currentUser.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setConfig(docSnap.data());
+          const data = docSnap.data();
+          setConfig({
+            title: data.title || "",
+            primaryColor: data.primaryColor || "",
+            secondaryColor: data.secondaryColor || "",
+          });
         }
       }
     };
@@ -32,7 +37,7 @@ export default function WidgetConfig() {
 
   const handleSave = async () => {
     if (auth.currentUser) {
-      await setDoc(doc(db, 'widget_configs', auth.currentUser.uid), config);
+      await setDoc(doc(db, "widget_configs", auth.currentUser.uid), config);
       toast({
         title: "Success",
         description: "Widget configuration saved successfully.",
@@ -58,7 +63,9 @@ export default function WidgetConfig() {
             id="primaryColor"
             type="color"
             value={config.primaryColor}
-            onChange={(e) => setConfig({ ...config, primaryColor: e.target.value })}
+            onChange={(e) =>
+              setConfig({ ...config, primaryColor: e.target.value })
+            }
           />
         </div>
         <div>
@@ -67,7 +74,9 @@ export default function WidgetConfig() {
             id="secondaryColor"
             type="color"
             value={config.secondaryColor}
-            onChange={(e) => setConfig({ ...config, secondaryColor: e.target.value })}
+            onChange={(e) =>
+              setConfig({ ...config, secondaryColor: e.target.value })
+            }
           />
         </div>
         <Button onClick={handleSave}>Save Configuration</Button>

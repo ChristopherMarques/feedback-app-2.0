@@ -1,20 +1,39 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db, auth } from '@/lib/firebase';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useState, useEffect } from "react";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db, auth } from "@/lib/firebase";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+
+interface FeedbackItem {
+  id: string;
+  [key: string]: any;
+}
 
 export default function Dashboard() {
-  const [feedbackData, setFeedbackData] = useState([]);
+  const [feedbackData, setFeedbackData] = useState<FeedbackItem[]>([]);
 
   useEffect(() => {
     const fetchFeedback = async () => {
       if (auth.currentUser) {
-        const q = query(collection(db, 'feedback'), where('userId', '==', auth.currentUser.uid));
+        const q = query(
+          collection(db, "feedback"),
+          where("userId", "==", auth.currentUser.uid)
+        );
         const querySnapshot = await getDocs(q);
-        const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const data = querySnapshot.docs.map(
+          (doc) => ({ id: doc.id, ...doc.data() } as FeedbackItem)
+        );
         setFeedbackData(data);
       }
     };
@@ -23,9 +42,18 @@ export default function Dashboard() {
   }, []);
 
   const chartData = [
-    { name: 'Positive', value: feedbackData.filter(f => f.sentiment === 'positive').length },
-    { name: 'Neutral', value: feedbackData.filter(f => f.sentiment === 'neutral').length },
-    { name: 'Negative', value: feedbackData.filter(f => f.sentiment === 'negative').length },
+    {
+      name: "Positive",
+      value: feedbackData.filter((f) => f.sentiment === "positive").length,
+    },
+    {
+      name: "Neutral",
+      value: feedbackData.filter((f) => f.sentiment === "neutral").length,
+    },
+    {
+      name: "Negative",
+      value: feedbackData.filter((f) => f.sentiment === "negative").length,
+    },
   ];
 
   return (
@@ -46,7 +74,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <p className="text-4xl font-bold text-green-600">
-              {feedbackData.filter(f => f.sentiment === 'positive').length}
+              {feedbackData.filter((f) => f.sentiment === "positive").length}
             </p>
           </CardContent>
         </Card>
@@ -56,7 +84,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <p className="text-4xl font-bold text-red-600">
-              {feedbackData.filter(f => f.sentiment === 'negative').length}
+              {feedbackData.filter((f) => f.sentiment === "negative").length}
             </p>
           </CardContent>
         </Card>

@@ -1,10 +1,11 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import Sidebar from '@/components/Sidebar';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import Sidebar from "@/components/Sidebar";
+import { Navbar } from "@/components/Navbar";
 
 export default function DashboardLayout({
   children,
@@ -17,7 +18,7 @@ export default function DashboardLayout({
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
-        router.push('/login');
+        router.push("/login");
       } else {
         setLoading(false);
       }
@@ -33,8 +34,9 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
       <Sidebar />
-      <main className="flex-1 p-8 overflow-y-auto">
-        {children}
+      <main className="flex-1 flex-col w-full overflow-y-auto">
+        <Navbar />
+        <div className="flex p-8 flex-col h-full w-full">{children}</div>
       </main>
     </div>
   );

@@ -1,26 +1,45 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db, auth } from '@/lib/firebase';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/components/ui/use-toast';
+import { useState, useEffect } from "react";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db, auth } from "@/lib/firebase";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 
 const plans = [
-  { id: 'basic', name: 'Basic', price: 9.99, features: ['100 feedbacks/month', 'Basic analytics', 'Email support'] },
-  { id: 'pro', name: 'Pro', price: 29.99, features: ['1000 feedbacks/month', 'Advanced analytics', 'Priority support'] },
-  { id: 'enterprise', name: 'Enterprise', price: 99.99, features: ['Unlimited feedbacks', 'Custom analytics', '24/7 support'] },
+  {
+    id: "basic",
+    name: "Basic",
+    price: 9.99,
+    features: ["100 feedbacks/month", "Basic analytics", "Email support"],
+  },
+  {
+    id: "pro",
+    name: "Pro",
+    price: 29.99,
+    features: [
+      "1000 feedbacks/month",
+      "Advanced analytics",
+      "Priority support",
+    ],
+  },
+  {
+    id: "enterprise",
+    name: "Enterprise",
+    price: 99.99,
+    features: ["Unlimited feedbacks", "Custom analytics", "24/7 support"],
+  },
 ];
 
 export default function ManagePlan() {
-  const [currentPlan, setCurrentPlan] = useState('');
+  const [currentPlan, setCurrentPlan] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
     const fetchCurrentPlan = async () => {
       if (auth.currentUser) {
-        const docRef = doc(db, 'user_plans', auth.currentUser.uid);
+        const docRef = doc(db, "user_plans", auth.currentUser.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setCurrentPlan(docSnap.data().planId);
@@ -31,9 +50,9 @@ export default function ManagePlan() {
     fetchCurrentPlan();
   }, []);
 
-  const handleUpgrade = async (planId) => {
+  const handleUpgrade = async (planId: string) => {
     if (auth.currentUser) {
-      await setDoc(doc(db, 'user_plans', auth.currentUser.uid), { planId });
+      await setDoc(doc(db, "user_plans", auth.currentUser.uid), { planId });
       setCurrentPlan(planId);
       toast({
         title: "Success",
@@ -45,7 +64,12 @@ export default function ManagePlan() {
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Manage Plan</h1>
-      <p>Current Plan: <span className="font-semibold">{currentPlan || 'No plan selected'}</span></p>
+      <p>
+        Current Plan:{" "}
+        <span className="font-semibold">
+          {currentPlan || "No plan selected"}
+        </span>
+      </p>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {plans.map((plan) => (
           <Card key={plan.id}>
@@ -63,7 +87,7 @@ export default function ManagePlan() {
                 onClick={() => handleUpgrade(plan.id)}
                 disabled={currentPlan === plan.id}
               >
-                {currentPlan === plan.id ? 'Current Plan' : 'Upgrade'}
+                {currentPlan === plan.id ? "Current Plan" : "Upgrade"}
               </Button>
             </CardContent>
           </Card>

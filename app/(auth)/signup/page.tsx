@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { signInWithPopup } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { auth, db, googleProvider } from '@/lib/firebase';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { useRouter } from "next/navigation";
+import { signInWithPopup } from "firebase/auth";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { auth, db, googleProvider } from "@/lib/firebase";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Signup() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function Signup() {
       const user = result.user;
 
       // Check if user exists in Firestore
-      const userRef = doc(db, 'users', user.uid);
+      const userRef = doc(db, "users", user.uid);
       const userSnap = await getDoc(userRef);
 
       if (!userSnap.exists()) {
@@ -30,7 +30,7 @@ export default function Signup() {
         });
       }
 
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (error) {
       toast({
         title: "Error",
